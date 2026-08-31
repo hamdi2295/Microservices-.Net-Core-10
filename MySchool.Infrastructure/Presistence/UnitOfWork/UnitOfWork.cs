@@ -21,21 +21,30 @@ namespace MySchool.Infrastructure.Presistence.UnitOfWork
 
         public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
-            _transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-        }
+            if (_transaction != null)
+                throw new InvalidOperationException(
+                    "Transaction is already started.");
 
+            _transaction = await _context.Database
+                .BeginTransactionAsync(cancellationToken);
+        }
 
         public async Task<int> SaveChangeAsync(CancellationToken cancellationToken = default)
         {
             return await _context.SaveChangesAsync(cancellationToken);
         }
 
-
         public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
         {
-            if( _transaction != null)
+            if (_transaction == null)
+                return;
+
+            try
             {
                 await _transaction.CommitAsync(cancellationToken);
+            }
+            finally
+            {
                 await _transaction.DisposeAsync();
                 _transaction = null;
             }
@@ -43,11 +52,17 @@ namespace MySchool.Infrastructure.Presistence.UnitOfWork
 
         public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
         {
-            if(_transaction != null)
+            if (_transaction == null)
+                return;
+
+            try
             {
                 await _transaction.RollbackAsync(cancellationToken);
+            }
+            finally
+            {
                 await _transaction.DisposeAsync();
-                _transaction= null;
+                _transaction = null;
             }
         }
     }

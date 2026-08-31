@@ -99,5 +99,14 @@ namespace MySchool.Infrastructure.Presistence.Repositories
             data.UpdatedDate = DateTime.UtcNow.ToLocalTime();
             data.Status = true;
         }
+
+
+        public async Task DeleteAsync(long id)
+        {
+
+            var data = await _context.M_Students.FirstOrDefaultAsync(x => x.StudentId == id);
+
+            _context.M_Students.Remove(data);
+        }
     }
 }

@@ -8,5 +8,6 @@ namespace MySchool.Features.Students
         public const string GetById = $"{Base}/{{id:long}}";
         public const string Create = $"{Base}";
         public const string Update = $"{Base}";
+        public const string Delete = $"{Base}/{{id:long}}";
     }
 }

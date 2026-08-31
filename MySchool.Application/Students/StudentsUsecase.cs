@@ -26,87 +26,125 @@ namespace MySchool.Application.Students
 
         public async Task<M_StudentResponse?> GetStudentsById(long id)
         {
-            var student = await _studentRepository.GetByIdAsync(id);
-
-            if(student == null)
+            try
             {
-                return null;
+                var student = await _studentRepository.GetByIdAsync(id);
+
+                if (student == null)
+                {
+                    return null;
+                }
+
+                return new M_StudentResponse
+                {
+                    StudentId = student.StudentId,
+                    StudentNumber = student.StudentNumber,
+                    NationalStudentNumber = student.NationalStudentNumber,
+                    FullName = student.FullName,
+                    Gender = student.Gender,
+                    BirthPlace = student.BirthPlace,
+                    BirthDate = student.BirthDate,
+                    Address = student.Address,
+                    PhoneNumber = student.PhoneNumber,
+                    Email = student.Email,
+                    Class = student.Class,
+                    EnrollmentDate = student.EnrollmentDate,
+                    Status = student.Status
+                };
             }
-
-            return new M_StudentResponse
+            catch (Exception ex)
             {
-                StudentId = student.StudentId,
-                StudentNumber = student.StudentNumber,
-                NationalStudentNumber = student.NationalStudentNumber,
-                FullName = student.FullName,
-                Gender = student.Gender,
-                BirthPlace = student.BirthPlace,
-                BirthDate = student.BirthDate,
-                Address = student.Address,
-                PhoneNumber = student.PhoneNumber,
-                Email = student.Email,
-                Class = student.Class,
-                EnrollmentDate = student.EnrollmentDate,
-                Status = student.Status
-            };
+                throw;
+            }
+            
         }
 
         
         public async Task CreateStudent(M_StudentRequest request)
         {
-            Domain.Entities.Students students = new Domain.Entities.Students(
-                request.StudentId,
-                request.StudentNumber,
-                request.NationalStudentNumber,
-                request.FullName,
-                request.Gender,
-                request.BirthPlace,
-                request.BirthDate,
-                request.Address,
-                request.PhoneNumber,
-                request.Email,
-                request.Class,
-                request.EnrollmentDate,
-                request.CreatedUser,
-                request.CreatedDate,
-                request.UpdatedUser,
-                request.UpdatedDate,
-                request.DeletedUser,
-                request.DeletedDate,
-                request.Status
-            );
+            try
+            {
+                Domain.Entities.Students students = new Domain.Entities.Students(
+                    request.StudentId,
+                    request.StudentNumber,
+                    request.NationalStudentNumber,
+                    request.FullName,
+                    request.Gender,
+                    request.BirthPlace,
+                    request.BirthDate,
+                    request.Address,
+                    request.PhoneNumber,
+                    request.Email,
+                    request.Class,
+                    request.EnrollmentDate,
+                    request.CreatedUser,
+                    request.CreatedDate,
+                    request.UpdatedUser,
+                    request.UpdatedDate,
+                    request.DeletedUser,
+                    request.DeletedDate,
+                    request.Status
+                );
 
-            await _studentRepository.CreateAsync(students);
-            await _unitOfWork.SaveChangeAsync();
+                await _studentRepository.CreateAsync(students);
+                await _unitOfWork.SaveChangeAsync();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            
         }
 
 
         public async Task UpdateStudent(M_StudentRequest request)
         {
-            Domain.Entities.Students students = new Domain.Entities.Students(
-                request.StudentId,
-                request.StudentNumber,
-                request.NationalStudentNumber,
-                request.FullName,
-                request.Gender,
-                request.BirthPlace,
-                request.BirthDate,
-                request.Address,
-                request.PhoneNumber,
-                request.Email,
-                request.Class,
-                request.EnrollmentDate,
-                request.CreatedUser,
-                request.CreatedDate,
-                request.UpdatedUser,
-                request.UpdatedDate,
-                request.DeletedUser,
-                request.DeletedDate,
-                request.Status
-            );
+            try
+            {
+                Domain.Entities.Students students = new Domain.Entities.Students(
+                    request.StudentId,
+                    request.StudentNumber,
+                    request.NationalStudentNumber,
+                    request.FullName,
+                    request.Gender,
+                    request.BirthPlace,
+                    request.BirthDate,
+                    request.Address,
+                    request.PhoneNumber,
+                    request.Email,
+                    request.Class,
+                    request.EnrollmentDate,
+                    request.CreatedUser,
+                    request.CreatedDate,
+                    request.UpdatedUser,
+                    request.UpdatedDate,
+                    request.DeletedUser,
+                    request.DeletedDate,
+                    request.Status
+                );
 
-            await _studentRepository.UpdateAsync(students);
-            await _unitOfWork.SaveChangeAsync();
+                await _studentRepository.UpdateAsync(students);
+                await _unitOfWork.SaveChangeAsync();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            
+        }
+
+
+        public async Task DeleteAsync(long id)
+        {
+            try
+            {
+                await _studentRepository.DeleteAsync(id);
+                await _unitOfWork.SaveChangeAsync();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

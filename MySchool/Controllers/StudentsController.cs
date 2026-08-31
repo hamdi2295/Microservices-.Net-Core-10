@@ -75,5 +75,24 @@ namespace MySchool.Controllers
                     ex.Message.ToString());
             }
         }
+
+
+        [HttpDelete("{id:long}")]
+        public async Task<IActionResult> Delete(long id)
+        {
+            try
+            {
+                await _studentUsecase.DeleteAsync(id);
+
+                return Ok(ApiResonseHelpers.Success("", "Success"));
+            }
+            catch (Exception ex)
+            {
+
+                return ApiResonseHelpers.Error(
+                    StatusCodes.Status500InternalServerError,
+                    ex.Message.ToString());
+            }
+        }
     }
 }
