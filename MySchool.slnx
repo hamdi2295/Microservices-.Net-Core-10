@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="MySchool.Application/MySchool.Application.csproj" />
+  <Project Path="MySchool.Domain/MySchool.Domain.csproj" Id="16d45c92-8a9b-4227-9bbb-1b60aa03c69c" />
+  <Project Path="MySchool.Infrastructure/MySchool.Infrastructure.csproj" Id="1d872135-a86e-4258-b08e-0317a4291cdc" />
+  <Project Path="MySchool/MySchool.csproj" />
+</Solution>
