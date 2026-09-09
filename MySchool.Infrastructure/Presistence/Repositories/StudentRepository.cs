@@ -101,12 +101,14 @@ namespace MySchool.Infrastructure.Presistence.Repositories
         }
 
 
-        public async Task DeleteAsync(long id)
+        public async Task DeleteAsync(Students student)
         {
 
-            var data = await _context.M_Students.FirstOrDefaultAsync(x => x.StudentId == id);
+            var data = await _context.M_Students.FirstOrDefaultAsync(x => x.StudentId == student.StudentId);
 
-            _context.M_Students.Remove(data);
+            data.DeletedUser = student.DeletedUser;
+            data.DeletedDate = DateTime.UtcNow.ToLocalTime();
+            data.Status = false;
         }
     }
 }

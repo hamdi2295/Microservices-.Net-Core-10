@@ -134,11 +134,33 @@ namespace MySchool.Application.Students
         }
 
 
-        public async Task DeleteAsync(long id)
+        public async Task DeleteStudent(M_StudentRequest request)
         {
             try
             {
-                await _studentRepository.DeleteAsync(id);
+                Domain.Entities.Students students = new Domain.Entities.Students(
+                    request.StudentId,
+                    request.StudentNumber,
+                    request.NationalStudentNumber,
+                    request.FullName,
+                    request.Gender,
+                    request.BirthPlace,
+                    request.BirthDate,
+                    request.Address,
+                    request.PhoneNumber,
+                    request.Email,
+                    request.Class,
+                    request.EnrollmentDate,
+                    request.CreatedUser,
+                    request.CreatedDate,
+                    request.UpdatedUser,
+                    request.UpdatedDate,
+                    request.DeletedUser,
+                    request.DeletedDate,
+                    request.Status
+                );
+
+                await _studentRepository.DeleteAsync(students);
                 await _unitOfWork.SaveChangeAsync();
             }
             catch (Exception ex)

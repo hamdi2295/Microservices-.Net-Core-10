@@ -6,23 +6,23 @@ namespace MySchool.Domain.Entities
 {
     public class Students
     {
-        public long StudentId { get; set; }
-        public string StudentNumber { get; set; } = null!;
-        public string NationalStudentNumber { get; set; }
-        public string FullName { get; set; } = null!;
-        public string Gender { get; set; }
-        public string BirthPlace { get; set; }
+        public long? StudentId { get; set; }
+        public string? StudentNumber { get; set; } = null!;
+        public string? NationalStudentNumber { get; set; }
+        public string? FullName { get; set; } = null!;
+        public string? Gender { get; set; }
+        public string? BirthPlace { get; set; }
         public DateTime? BirthDate { get; set; }
-        public string Address { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Email { get; set; }
+        public string? Address { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Email { get; set; }
         public long? Class { get; set; }
         public DateTime? EnrollmentDate { get; set; }
-        public string CreatedUser { get; set; }
+        public string? CreatedUser { get; set; }
         public DateTime? CreatedDate { get; set; }
-        public string UpdatedUser { get; set; }
+        public string? UpdatedUser { get; set; }
         public DateTime? UpdatedDate { get; set; }
-        public string DeletedUser { get; set; }
+        public string? DeletedUser { get; set; }
         public DateTime? DeletedDate { get; set; }
         public bool? Status { get; set; }
 
@@ -32,23 +32,23 @@ namespace MySchool.Domain.Entities
         }
 
         public Students(
-            long studentId,  
-            string studentNumber, 
-            string nationalStudentNumber,
-            string fullName,
-            string gender,
-            string birthPlace,
+            long? studentId,  
+            string? studentNumber, 
+            string? nationalStudentNumber,
+            string? fullName,
+            string? gender,
+            string? birthPlace,
             DateTime? birthDate,
-            string address,
-            string phoneNumber,
-            string email,
+            string? address,
+            string? phoneNumber,
+            string? email,
             long? classes,
             DateTime? enrollmentDate,
-            string createdUser,
+            string? createdUser,
             DateTime? createdDate,
-            string updatedUser,
+            string? updatedUser,
             DateTime? updatedDate,
-            string deletedUser,
+            string? deletedUser,
             DateTime? deletedDate,
             bool? status
         )

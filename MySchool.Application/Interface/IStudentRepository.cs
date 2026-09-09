@@ -10,6 +10,6 @@ namespace MySchool.Application.Interface
         Task<Domain.Entities.Students?> GetByIdAsync(long id);
         Task CreateAsync(Domain.Entities.Students student);
         Task UpdateAsync(Domain.Entities.Students student);
-        Task DeleteAsync(long id);
+        Task DeleteAsync(Domain.Entities.Students student);
     }
 }

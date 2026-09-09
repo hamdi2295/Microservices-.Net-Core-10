@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MySchool.Application.Interface;
@@ -10,7 +11,6 @@ using MySchool.Helpers;
 
 namespace MySchool.Controllers
 {
-    [Route(StudentRoutes.Base)]
     [ApiController]
     public class StudentsController : ControllerBase
     {
@@ -22,7 +22,7 @@ namespace MySchool.Controllers
         }
 
 
-        [HttpGet("{id:long}")]
+        [HttpGet(StudentRoutes.GetById)]
         public async Task<IActionResult> GetById(long id)
         {
             try
@@ -41,7 +41,7 @@ namespace MySchool.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost(StudentRoutes.Create)]
         public async Task<IActionResult> Create(M_StudentRequest request)
         {
             try
@@ -59,7 +59,7 @@ namespace MySchool.Controllers
         }
 
 
-        [HttpPut]
+        [HttpPut(StudentRoutes.Update)]
         public async Task<IActionResult> Update(M_StudentRequest request)
         {
             try
@@ -77,12 +77,12 @@ namespace MySchool.Controllers
         }
 
 
-        [HttpDelete("{id:long}")]
-        public async Task<IActionResult> Delete(long id)
+        [HttpDelete(StudentRoutes.Delete)]
+        public async Task<IActionResult> Delete(M_StudentRequest request)
         {
             try
             {
-                await _studentUsecase.DeleteAsync(id);
+                await _studentUsecase.DeleteStudent(request);
 
                 return Ok(ApiResonseHelpers.Success("", "Success"));
             }
