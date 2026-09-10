@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MySchool.Infrastructure.Presistence.Database.Students;
+using MySchool.Infrastructure.Presistence.Database.Auth;
 
 namespace MySchool.Infrastructure.Presistence.Context
 {
@@ -15,7 +16,11 @@ namespace MySchool.Infrastructure.Presistence.Context
         {
         }
 
+        //students
         public DbSet<M_Students> M_Students => Set<M_Students>();
+
+        //auth
+        public DbSet<M_Roles> M_Roles => Set<M_Roles>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
