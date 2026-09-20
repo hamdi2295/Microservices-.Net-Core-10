@@ -34,6 +34,7 @@ namespace MySchool.Infrastructure
 
             //repositories
             services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
 
             //usecase
             services.AddScoped<StudentsUsecase>();

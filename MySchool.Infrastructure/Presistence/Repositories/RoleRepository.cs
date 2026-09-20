@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MySchool.Application.Interface;
 using MySchool.Domain.Entities;
 using MySchool.Infrastructure.Presistence.Context;
 using MySchool.Infrastructure.Presistence.Database.Auth;
@@ -9,7 +10,7 @@ using System.Text;
 
 namespace MySchool.Infrastructure.Presistence.Repositories
 {
-    public class RoleRepository
+    public class RoleRepository : IRoleRepository
     {
         private readonly MySchoolContext _context;
 
@@ -19,7 +20,7 @@ namespace MySchool.Infrastructure.Presistence.Repositories
         }
 
 
-        public async Task<List<Roles>> GetAll()
+        public async Task<List<Roles>> GetAllAsync()
         {
             var data = await _context.M_Roles.ToListAsync();
 
