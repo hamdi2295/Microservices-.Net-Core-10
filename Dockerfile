@@ -1,31 +1,20 @@
-# Root Dockerfile to build the MySchool solution
+
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-
-ARG BUILD_CONFIGURATION=Release
-
 WORKDIR /src
 
-# Copy entire repository into the build image (build context must be repository root)
 COPY . .
+RUN dotnet restore
+RUN dotnet publish -c Release -o /app/publish
 
-# Restore solution
-RUN dotnet restore "MySchool.slnx"
-
-# Build and publish the Web project
-RUN dotnet build "MySchool/MySchool.csproj" \
-	-c $BUILD_CONFIGURATION \
-	-o /app/build \
-	--no-restore
-
-RUN dotnet publish "MySchool/MySchool.csproj" \
-	-c $BUILD_CONFIGURATION \
-	-o /app/publish \
-	--no-restore \
-	/p:UseAppHost=false
-
+# Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
-ENV ASPNETCORE_URLS="http://+:7001"
-EXPOSE 7001
+
+ENV ASPNETCORE_HTTP_PORTS=7001
+
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "MySchool.dll"]
+
+EXPOSE 7001
+
+ENTRYPOINT ["dotnet", "MySchool.Api.dll"]

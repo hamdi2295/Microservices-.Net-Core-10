@@ -1,4 +1,4 @@
-```groovy
+
 pipeline {
     agent any
 
@@ -6,86 +6,106 @@ pipeline {
         APP_NAME       = 'my-microservice-api'
         CONTAINER_NAME = 'my-microservice-container'
         IMAGE_TAG      = 'latest'
+
         HOST_PORT      = '7001'
         CONTAINER_PORT = '8080'
     }
 
     stages {
+
+        // 1. Ambil source code dari GitHub
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
+        // 2. Periksa akses Docker dari Jenkins
         stage('Check Docker') {
             steps {
                 sh '''
                     set -e
-                    docker version
+                    echo "Checking Docker CLI..."
+                    docker --version
+
+                    echo "Checking Docker Engine..."
                     docker info
                 '''
             }
         }
 
+        // 3. Build Docker image aplikasi .NET 10
         stage('Build Docker Image') {
             steps {
                 sh '''
                     set -e
+
+                    echo "Building Docker image..."
+
                     docker build \
-                      --pull \
-                      -t ${APP_NAME}:${IMAGE_TAG} .
+                        -t ${APP_NAME}:${IMAGE_TAG} .
+
+                    echo "Docker image build successful."
                 '''
             }
         }
 
+        // 4. Verifikasi Docker image
         stage('Verify Docker Image') {
             steps {
                 sh '''
                     set -e
+
                     docker image inspect \
-                      ${APP_NAME}:${IMAGE_TAG}
+                        ${APP_NAME}:${IMAGE_TAG}
+
+                    echo "Docker image verified."
                 '''
             }
         }
 
+        // 5. Deploy aplikasi ke Docker
         stage('Deploy Container') {
             steps {
                 sh '''
                     set -e
 
-                    # Simpan image yang akan dijalankan
-                    docker image inspect \
-                      ${APP_NAME}:${IMAGE_TAG}
+                    echo "Stopping old container if it exists..."
 
-                    # Hapus container lama jika tersedia
-                    docker stop ${CONTAINER_NAME} || true
-                    docker rm ${CONTAINER_NAME} || true
+                    if docker container inspect ${CONTAINER_NAME} \
+                        >/dev/null 2>&1; then
+                        docker stop ${CONTAINER_NAME} || true
+                        docker rm ${CONTAINER_NAME} || true
+                    fi
 
-                    # Jalankan container baru
+                    echo "Starting new container..."
+
                     docker run -d \
-                      --name ${CONTAINER_NAME} \
-                      -p ${HOST_PORT}:${CONTAINER_PORT} \
-                      --restart unless-stopped \
-                      ${APP_NAME}:${IMAGE_TAG}
+                        --name ${CONTAINER_NAME} \
+                        -p ${HOST_PORT}:${CONTAINER_PORT} \
+                        --restart unless-stopped \
+                        ${APP_NAME}:${IMAGE_TAG}
 
-                    # Tunggu sebentar untuk startup
+                    echo "Waiting for application startup..."
                     sleep 5
 
-                    # Verifikasi status container
                     STATUS=$(docker inspect \
-                      -f '{{.State.Status}}' \
-                      ${CONTAINER_NAME})
+                        -f '{{.State.Status}}' \
+                        ${CONTAINER_NAME})
 
                     echo "Container status: ${STATUS}"
 
                     if [ "$STATUS" != "running" ]; then
-                        docker logs ${CONTAINER_NAME}
+                        echo "Container failed to start."
+                        docker logs ${CONTAINER_NAME} || true
                         exit 1
                     fi
 
+                    echo "Container is running."
                     docker ps \
-                      --filter "name=${CONTAINER_NAME}"
+                        --filter "name=${CONTAINER_NAME}"
 
+                    echo "Recent application logs:"
                     docker logs --tail 50 ${CONTAINER_NAME}
                 '''
             }
@@ -94,16 +114,32 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline selesai. Container berhasil berjalan.'
-            echo 'Periksa API di http://localhost:7001'
+            echo '''
+            ========================================
+            PIPELINE SUCCESS
+            ========================================
+            Docker image built successfully.
+            Container deployed successfully.
+
+            Application URL:
+            http://localhost:7001
+
+            Container:
+            my-microservice-container
+            ========================================
+            '''
         }
 
         failure {
-            echo 'Pipeline gagal. Periksa Console Output untuk detail.'
+            echo 'PIPELINE FAILED. Check Console Output.'
+
             sh '''
-                docker logs ${CONTAINER_NAME} || true
+                docker logs my-microservice-container || true
             '''
+        }
+
+        always {
+            echo 'Jenkins pipeline execution completed.'
         }
     }
 }
-```
