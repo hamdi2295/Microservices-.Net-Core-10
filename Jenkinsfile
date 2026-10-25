@@ -2,43 +2,49 @@ pipeline {
     agent any
 
     environment {
-        DOTNET_ROOT = "${WORKSPACE}/.dotnet"
-        PATH        = "${WORKSPACE}/.dotnet:${env.PATH}"
-        DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = '1'
-        ASPNETCORE_URLS = 'http://0.0.0.0:7001'
+        APP_NAME       = 'my-microservice-api'
+        CONTAINER_NAME = 'my-microservice-container'
+        IMAGE_TAG      = 'latest'
+        HOST_PORT      = '7001'
+        CONTAINER_PORT = '8080' // Port default appsettings.json/Dockerfile
     }
 
     stages {
-        stage('Setup .NET 10 SDK') {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                // appsettings.json akan otomatis masuk ke dalam image saat build
+                sh "docker build -t ${APP_NAME}:${IMAGE_TAG} ."
+            }
+        }
+
+        stage('Deploy Container') {
             steps {
                 sh '''
-                    if [ ! -d "$DOTNET_ROOT" ]; then
-                        echo "Downloading .NET 10 SDK..."
-                        curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
-                        chmod +x dotnet-install.sh
-                        ./dotnet-install.sh --channel 10.0 --install-dir "$DOTNET_ROOT"
-                        rm dotnet-install.sh
-                    fi
+                    # Stop dan hapus container lama jika ada
+                    docker stop ${CONTAINER_NAME} || true
+                    docker rm ${CONTAINER_NAME} || true
+
+                    # Jalankan container baru
+                    docker run -d \
+                      --name ${CONTAINER_NAME} \
+                      -p ${HOST_PORT}:${CONTAINER_PORT} \
+                      --restart unless-stopped \
+                      ${APP_NAME}:${IMAGE_TAG}
                 '''
             }
         }
+    }
 
-        stage('Check .NET SDK') {
-            steps {
-                sh 'dotnet --info'
-            }
-        }
-
-        stage('Restore') {
-            steps {
-                sh 'dotnet restore'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh 'dotnet build --configuration Release'
-            }
+    post {
+        always {
+            // Pembersihan image gantung
+            sh 'docker image prune -f'
         }
     }
 }
