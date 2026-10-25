@@ -5,6 +5,7 @@ pipeline {
         DOTNET_ROOT = "${WORKSPACE}/.dotnet"
         PATH        = "${WORKSPACE}/.dotnet:${env.PATH}"
         DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = '1'
+        ASPNETCORE_URLS = 'http://0.0.0.0:7001'
     }
 
     stages {
