@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        // Menambahkan direktori install dotnet ke PATH lingkungan build
         DOTNET_ROOT = "${WORKSPACE}/.dotnet"
         PATH        = "${WORKSPACE}/.dotnet:${env.PATH}"
+        DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = '1'
     }
 
     stages {
