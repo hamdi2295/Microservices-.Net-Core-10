@@ -25,7 +25,7 @@ RUN dotnet publish "MySchool/MySchool.csproj" \
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
-ENV ASPNETCORE_URLS="http://+:8080"
-EXPOSE 8080
+ENV ASPNETCORE_URLS="http://+:7001"
+EXPOSE 7001
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "MySchool.dll"]
