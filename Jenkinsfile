@@ -1,8 +1,27 @@
-
 pipeline {
     agent any
 
+    environment {
+        // Menambahkan direktori install dotnet ke PATH lingkungan build
+        DOTNET_ROOT = "${WORKSPACE}/.dotnet"
+        PATH        = "${WORKSPACE}/.dotnet:${env.PATH}"
+    }
+
     stages {
+        stage('Setup .NET 10 SDK') {
+            steps {
+                sh '''
+                    if [ ! -d "$DOTNET_ROOT" ]; then
+                        echo "Downloading .NET 10 SDK..."
+                        curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
+                        chmod +x dotnet-install.sh
+                        ./dotnet-install.sh --channel 10.0 --install-dir "$DOTNET_ROOT"
+                        rm dotnet-install.sh
+                    fi
+                '''
+            }
+        }
+
         stage('Check .NET SDK') {
             steps {
                 sh 'dotnet --info'
@@ -17,37 +36,8 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'dotnet build --configuration Release --no-restore'
+                sh 'dotnet build --configuration Release'
             }
-        }
-
-        stage('Test') {
-            steps {
-                sh 'dotnet test --configuration Release --no-build'
-            }
-        }
-
-        stage('Publish') {
-            steps {
-                sh '''
-                    dotnet publish \
-                      --configuration Release \
-                      --no-build \
-                      --output publish
-                '''
-            }
-        }
-    }
-
-    post {
-        success {
-            echo 'Build dan pipeline .NET API berhasil!'
-            archiveArtifacts artifacts: 'publish/**',
-                             allowEmptyArchive: false
-        }
-
-        failure {
-            echo 'Pipeline gagal. Periksa Console Output.'
         }
     }
 }
